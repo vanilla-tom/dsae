@@ -6,6 +6,5 @@ int main(){
   for(int i=0;i<7;i++){
     cout<<b[i]<<" ";
   }
-  delete b;  //用完就删，从我做起（
   return 0;
 }

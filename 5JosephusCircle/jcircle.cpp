@@ -24,6 +24,7 @@ int deleteNextNode(node *head){
     node *tmp = head->next;
     head->next = tmp->next;
     delete tmp;
+    tmp = NULL;
     return 1;
   }
 }
