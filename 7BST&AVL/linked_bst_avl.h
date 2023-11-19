@@ -7,6 +7,7 @@ typedef struct node{
   node *left;
   node *right;
   node *parent;
+  int leftH, rightH;
 }node;
 
 typedef struct nodeArr{
@@ -28,7 +29,7 @@ public:
   node *root;       // 根节点
   int nodeNums = 0; // 节点数目
   BST(int data);
-  bool insertNode(int data);            // 插入元素
+  node *insertNode(int data);            // 插入元素
   bool deleteNode(int data);            // 删除元素
   void generateBST(int list[], int n);  // 从数组生成树
   int *LNRTree();                       // 中序遍历
@@ -37,8 +38,13 @@ public:
 };
 
 class AVL : public BST {
+private:
+  int refreshHeight(node *p);
+  int getBF(node *p);
+  node *findUnbalanceNode(node *p);
 public:
   AVL(int data) : BST(data) {};
+  bool avlInsertNode(int data);
   void generateAVL(int list[], int n);
 };
 
@@ -79,26 +85,25 @@ node *BST::addChild(int data, node *parent, bool addleft){
   return child;
 }
 
-bool BST::insertNode(int data){
+node *BST::insertNode(int data){
   node *p = root;
   while(true){
     if(data < p->data){
       if(p->left != NULL) p = p->left;
       else{
         p->left = addChild(data, p, true);
-        break;
+        return p->left;
       }
     }else if(data > p->data){
       if(p->right != NULL) p = p->right;
       else{
         p->right = addChild(data, p, false);
-        break;
+        return p->right;
       }
     }else{
-      return false; //有相同元素返回false
+      return NULL;
     }
   }
-  return true;
 }
 
 void BST::generateBST(int list[], int n){
@@ -110,10 +115,8 @@ void BST::generateBST(int list[], int n){
 node * BST::getNodeByData(node *p, int x){
   if(p == NULL) return 0;
   if(p->data > x) return getNodeByData(p->left, x);
-  else{
-    if(p->data == x) return p;
-    else return getNodeByData(p->right, x);
-  }
+  else if(p->data < x) return getNodeByData(p->right, x);
+  else return p;
 }
 
 bool BST::deleteNodeByPos(node *pos){
@@ -195,11 +198,49 @@ float BST::getASL(){
  * AVL相关函数
 */
 
+int AVL::refreshHeight(node *p){
+  if(p == NULL) return 0;
+  if(p->left == NULL && p->right == NULL){
+    p->leftH = p->rightH = 0;
+    return 1;
+  }else if(p->left == NULL){
+    p->leftH = 0;
+    p->rightH = refreshHeight(p->right);
+    return p->rightH + 1;
+  }else if(p->right == NULL){
+    p->rightH = 0;
+    p->leftH = refreshHeight(p->left);
+    return p->leftH + 1;
+  }else{
+    p->leftH = refreshHeight(p->left);
+    p->rightH = refreshHeight(p->right);
+    return p->leftH > p->rightH ? p->leftH + 1 : p->rightH + 1;
+  }
+}
+
+int AVL::getBF(node *p){
+  return p->leftH - p->rightH;
+}
+
+node *AVL::findUnbalanceNode(node *p){
+  int bf = getBF(p);
+  node *t = p;
+  while(bf >= -1 && bf <= 1){
+    t = t->parent;
+  }
+  return t;
+}
+
+bool AVL::avlInsertNode(int data){
+  node *p = insertNode(data);
+  if(p == NULL) return false;
+  refreshHeight(root);
+  p = findUnbalanceNode(p);
+  //todo
+}
+
 void AVL::generateAVL(int list[], int n){
   for(int i = 1; i < n; i++){
     insertNode(list[i]);
-    //todo:
-    //检查树是否平衡
-    //旋转
-  }
+  } 
 }
