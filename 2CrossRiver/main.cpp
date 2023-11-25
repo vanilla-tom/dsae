@@ -1,5 +1,6 @@
 #include<iostream>
 #include<vector>
+#include<string>
 
 #define FARMER 1
 #define WOLF 2
@@ -7,6 +8,8 @@
 #define CABBAGE 8
 
 using namespace std;
+
+int solution_cnt = 0;
 
 bool is_crossed(int status, int who){
   if((status & who) == who) return true;
@@ -30,9 +33,6 @@ bool is_safe(int status){
   }
 }
 
-//0001  0100
-//        4
-
 void get_move_list(int status, vector<int> &move_list){
   move_list.clear();
   for(int i = 1; i <= 8; i = i<<1){
@@ -45,19 +45,36 @@ void get_move_list(int status, vector<int> &move_list){
   }
 }
 
-void output(vector<int> &path){
-  for(int i = 0; i < path.size(); i++){
-    cout << path[i] << " ";
+void print(int status){
+  string m[4] = {"farmer", "wolf", "sheep", "cabbage"};
+  for(int i = 0; i < 4; i++){
+    if((status/(1<<i))%2 == 1){
+      cout << m[i] << " ";
+    }
+  }
+  cout << endl << "---------------------------" << endl << "river";
+  cout << endl << "---------------------------" << endl;
+  for(int i = 0; i < 4; i++){
+    if((status/(1<<i))%2 == 0){
+      cout << m[i] << " ";
+    }
   }
   cout << endl;
 }
 
-void print(int status) {
-  printf("stat:%d%d%d%d ", (status/8)%2, (status/4)%2, (status/2)%2, status%2);
+void output(vector<int> &path){
+  cout << "solution " << solution_cnt << " :" << endl;
+  for(int i = 0; i < path.size(); i++){
+    print(path[i]);
+    if(i != path.size()-1)
+      cout << endl << "V" << endl << endl;
+  }
+  cout << endl;
 }
 
 void dfs(int status, vector<int> &path){
   if(status == 15){
+    solution_cnt++;
     output(path);
     return;
   }
@@ -79,14 +96,8 @@ void dfs(int status, vector<int> &path){
 }
 
 int main(){
-  // vector<int> move_list;
-  // get_move_list(0b1111, move_list);
-  // for(auto s : move_list) {
-  //   print(s);
-  // }
-
   int status = 0;  //全部在南岸
-  vector<int> path(0);
+  vector<int> path(1, 0);
   path.reserve(16);
   dfs(status, path);
   return 0;
