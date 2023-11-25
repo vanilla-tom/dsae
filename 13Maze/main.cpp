@@ -1,4 +1,4 @@
-#include "Astar.cpp"
+#include "maze_head.h"
 
 void output(node *n){
   if(n->parent != nullptr){
@@ -8,9 +8,12 @@ void output(node *n){
 }
 
 int main(){
-  vector<vector<int> > map(mapHeight, vector<int>(mapWidth, 1));
-  initMap(map);  //随机生成
+  vector<vector<int> > map(0, vector<int>(0));
+  // randomMap(map, 13, 13);
+  readMap(map, "testmap.txt");
   //打印
+  int mapHeight = map.size();
+  int mapWidth = map[0].size();
   for(int i = 0; i < mapHeight; i++){
     for(int j = 0; j < mapWidth; j++){
       cout << map[i][j] << " ";
@@ -23,5 +26,4 @@ int main(){
   }else{
     output(path);
   }
-  return 0;
 }

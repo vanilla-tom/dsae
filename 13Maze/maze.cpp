@@ -1,16 +1,8 @@
-#include<cmath>
-#include<vector>
-#include<iostream>
-#include<time.h>
-
-#define mapWidth 13
-#define mapHeight 13
-
-using namespace std;
+#include "maze_head.h"
 
 void create_path(vector<vector<int> > &map, int x, int y){
    map[y][x] = 0;
-   int head[4][2] = { {-2,0},{0,2},{2,0},{0,-2} };
+   int moveArr[4][2] = { {-2,0},{0,2},{2,0},{0,-2} };
    int order[4] = { 0 };
    int n = 0;
    bool flag = true;
@@ -28,9 +20,9 @@ void create_path(vector<vector<int> > &map, int x, int y){
   }
   int nx = 0, ny = 0, dx = 0, dy = 0;
   for (int i = 0; i < 4; i++) {
-    dx = head[order[i]][1];
-    dy = head[order[i]][0];
-    if (x + dx < 0 || x + dx >= mapWidth || y + dy < 0 || y + dy >= mapHeight) {
+    dx = moveArr[order[i]][1];
+    dy = moveArr[order[i]][0];
+    if (x + dx < 0 || x + dx >= map[0].size() || y + dy < 0 || y + dy >= map.size()) {
       continue;
     } else {
       if (map[y + dy][x + dx] == 2) {
@@ -46,13 +38,38 @@ void create_path(vector<vector<int> > &map, int x, int y){
   }
 }
 
-void initMap(vector<vector<int> > &map){
+void randomMap(vector<vector<int> > &map, int height, int width){
+  map.resize(height, vector<int>(width, 1));
   time_t t;
   srand(time(&t));
-  for(int i = 1; i < mapHeight; i += 2){
-    for(int j = 1; j < mapWidth; j += 2){
+  for(int i = 1; i < map.size(); i += 2){
+    for(int j = 1; j < map[0].size(); j += 2){
       map[i][j] = 2;
     }
   }
   create_path(map, 1, 1);
+}
+
+void readMap(vector<vector<int> > &map, string filename){
+  ifstream infile;
+  infile.open(filename, ios::in);
+  if(!infile.is_open()){
+    cout << "error opening file" << endl;
+    exit(1);
+  }
+  map.reserve(400);
+  vector<int> line;
+  string s;
+  while(getline(infile, s)){
+    istringstream is(s);
+    int d;
+    while(!is.eof()){
+      is >> d;
+      line.push_back(d);
+    }
+    map.push_back(line);
+    line.clear();
+    s.clear();
+  }
+  infile.close();
 }
