@@ -1,3 +1,5 @@
+#pragma once
+
 #include<cmath>
 #include<vector>
 #include<iostream>
@@ -6,14 +8,13 @@
 #include<string>
 #include<time.h>
 
-using namespace std;
 
-typedef struct node{
-  int x, y;
-  int f, g, h;
-  node *parent;
+typedef struct node {
+	int x, y;
+	int f, g, h;
+	node* parent;
 }node;
 
-node *astar(vector<vector<int> > &, int, int, int, int);
-void randomMap(vector<vector<int> > &, int, int);
-void readMap(vector<vector<int> > &, string);
+node* astar(std::vector<std::vector<int> >&, int, int, int, int);
+void randomMap(std::vector<std::vector<int> >&, int, int);
+void readMap(std::vector<std::vector<int> >&, std::string);
